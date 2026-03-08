@@ -1,0 +1,18 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+async function main() {
+    const glasses = await prisma.glassType.findMany({
+        select: { name: true, pictureUrl: true }
+    });
+    console.log(JSON.stringify(glasses, null, 2));
+}
+
+main()
+    .catch((e) => {
+        console.error(e);
+        process.exit(1);
+    })
+    .finally(async () => {
+        await prisma.$disconnect();
+    });

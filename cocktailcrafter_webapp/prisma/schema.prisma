@@ -1,0 +1,213 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String     @id @default(cuid())
+  name          String?
+  email         String?    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  createdAt     DateTime   @default(now())
+  firstName     String?
+  lastName      String?
+  nickname      String?
+  role          String     @default("USER")
+  accounts      Account[]
+  cocktails     Cocktail[]
+  favorites     Favorite[]
+  ratings       Rating[]
+  sessions      Session[]
+  sets          CocktailSet[]
+}
+
+model Favorite {
+  id         String   @id @default(cuid())
+  userId     String
+  cocktailId String
+  createdAt  DateTime @default(now())
+  cocktail   Cocktail @relation(fields: [cocktailId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, cocktailId])
+  @@index([cocktailId])
+}
+
+model Rating {
+  id         String   @id @default(cuid())
+  userId     String
+  cocktailId String
+  value      Float
+  createdAt  DateTime @default(now())
+  cocktail   Cocktail @relation(fields: [cocktailId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, cocktailId])
+  @@index([cocktailId])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?  @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId], map: "Account_userId_fkey")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "Session_userId_fkey")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model PasswordResetToken {
+  id         String   @id @default(cuid())
+  email      String
+  token      String   @unique
+  expires    DateTime
+
+  @@index([email])
+}
+
+model GlassType {
+  id            String     @id @default(cuid())
+  name          String     @unique
+  description   String?    @db.Text
+  volume        Int?
+  instructions  String?    @db.Text
+  pictureUrl    String?
+  affiliateLink String?
+  cocktails     Cocktail[] @relation("CocktailToGlass")
+}
+
+model IceType {
+  id           String     @id @default(cuid())
+  name         String     @unique
+  description  String?    @db.Text
+  instructions String?    @db.Text
+  cocktails    Cocktail[] @relation("CocktailToIce")
+}
+
+model Garnish {
+  id           String     @id @default(cuid())
+  name         String     @unique
+  description  String?    @db.Text
+  instructions String?    @db.Text
+  cocktails    Cocktail[] @relation("CocktailToGarnish")
+}
+
+model TasteProfile {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  description String?    @db.Text
+  cocktails   Cocktail[] @relation("CocktailToTasteProfile")
+}
+
+model ShakeTechnique {
+  id           String     @id @default(cuid())
+  name         String     @unique
+  description  String?    @db.Text
+  instructions String?    @db.Text
+  dilution     Float?     @default(0.0)
+  cocktails    Cocktail[] @relation("CocktailToTechnique")
+}
+
+model Bottle {
+  id             String   @id @default(cuid())
+  name           String   @unique
+  category       String?
+  type           String?
+  productName    String?
+  description    String?  @db.Text
+  aroma          String?  @db.Text
+  tasteProfile   String?  @db.Text
+  texture        String?  @db.Text
+  alcoholContent Float?
+  sugarContent   Float?   @default(0.0)
+  acidity        Float?   @default(0.0)
+  country        String?
+  affiliateLink  String?
+  parentId       String?
+  alternativeId  String?
+  nonAlcoholicId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
+
+  parent         Bottle?  @relation("BottleHierarchy", fields: [parentId], references: [id])
+  variants       Bottle[] @relation("BottleHierarchy")
+  alternative    Bottle?  @relation("BottleToAlternative", fields: [alternativeId], references: [id])
+  alternativeFor Bottle[] @relation("BottleToAlternative")
+  nonAlcoholic   Bottle?  @relation("BottleToNonAlcoholic", fields: [nonAlcoholicId], references: [id])
+  nonAlcoholicFor Bottle[] @relation("BottleToNonAlcoholic")
+
+  @@index([category])
+  @@index([type])
+}
+
+model CocktailSet {
+  id          String     @id @default(cuid())
+  name        String
+  description String?
+  isPublic    Boolean    @default(true)
+  userId      String?
+  user        User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cocktails   Cocktail[] @relation("CocktailToCocktailSet")
+  createdAt   DateTime   @default(now())
+}
+
+model Cocktail {
+  id              String           @id @default(cuid())
+  name            String
+  description     String?          @db.Text
+  volume          Float            @default(0)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  userId          String?
+  history         String?          @db.Text
+  instruction     String?          @db.Text
+  mixList         String?          @db.Text
+  pictureUrl      String?
+  recipe          String?          @db.LongText
+  votingScore     Int              @default(0)
+  automationLevel Int              @default(0)
+  user            User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  favorites       Favorite[]
+  ratings         Rating[]
+  sets            CocktailSet[]    @relation("CocktailToCocktailSet")
+  garnishes       Garnish[]        @relation("CocktailToGarnish")
+  glasses         GlassType[]      @relation("CocktailToGlass")
+  ices            IceType[]        @relation("CocktailToIce")
+  tastes          TasteProfile[]   @relation("CocktailToTasteProfile")
+  techniques      ShakeTechnique[] @relation("CocktailToTechnique")
+
+  @@index([userId], map: "Cocktail_userId_fkey")
+}

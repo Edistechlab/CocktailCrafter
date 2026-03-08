@@ -1,0 +1,18 @@
+const { PrismaClient } = require('../node_modules/.prisma/client')
+const p = new PrismaClient()
+async function main() {
+    const glasses = await p.glassType.findMany()
+    const ices = await p.iceType.findMany()
+    const techniques = await p.shakeTechnique.findMany()
+    const garnishes = await p.garnish.findMany()
+    const bottles = await p.bottle.findMany()
+    const tastes = await p.tasteProfile.findMany()
+    console.log('GLASSES:', JSON.stringify(glasses.map(g => ({ id: g.id, name: g.name }))))
+    console.log('ICES:', JSON.stringify(ices.map(i => ({ id: i.id, name: i.name }))))
+    console.log('TECHNIQUES:', JSON.stringify(techniques.map(t => ({ id: t.id, name: t.name }))))
+    console.log('GARNISHES:', JSON.stringify(garnishes.map(g => ({ id: g.id, name: g.name }))))
+    console.log('BOTTLES:', JSON.stringify(bottles.map(b => ({ id: b.id, name: b.name }))))
+    console.log('TASTES:', JSON.stringify(tastes.map(t => ({ id: t.id, name: t.name }))))
+    await p.$disconnect()
+}
+main().catch(console.error)
