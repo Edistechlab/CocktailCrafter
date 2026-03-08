@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSession } from "next-auth/react"
@@ -13,7 +14,7 @@ export function DashboardSidebar() {
 
     const isSuperAdmin = session?.user?.role === "SUPER_ADMIN"
 
-    const allLinks = [
+    const allLinks: { name: string; href: string; icon: React.ReactElement; note?: string }[] = [
         { name: "Overview", href: "/dashboard", icon: <i className="ph ph-squares-four text-xl"></i> },
         { name: "Cocktails", href: "/dashboard/cocktails", icon: <i className="ph ph-martini text-xl"></i> },
         { name: "Bottles", href: "/dashboard/bottles", icon: <BottleIcon className="w-5 h-5" /> },
