@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { prisma } from "@/lib/prisma"
 import UsersListClient from "./UsersListClient"
 import { getServerSession } from "next-auth"
