@@ -12,8 +12,9 @@
   --font-heading: var(--font-outfit), sans-serif;
 }
 
-html {
+html, body {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
