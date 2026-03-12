@@ -43,7 +43,7 @@ export default async function IndexPage() {
     return (
         <div className="relative isolate pt-12">
             {/* Main Brand Hero */}
-            <section className="pt-24 pb-32 md:pt-48 md:pb-52 px-6 overflow-hidden">
+            <section className="pt-24 pb-12 md:pt-48 md:pb-52 px-6 overflow-hidden">
                 <div className="max-w-6xl mx-auto text-center relative z-10">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00d2ff]/10 border border-[#00d2ff]/20 text-[#00d2ff] text-[10px] font-black uppercase tracking-[0.2em] mb-10 animate-fade-in">
                         Professional Mixology
