@@ -71,7 +71,7 @@ export default async function GlasswarePage() {
                                     <div className="w-10 h-10 bg-[#00d2ff]/10 rounded-xl flex items-center justify-center border border-[#00d2ff]/20">
                                         <GlassIcon type={glass.name} className="w-6 h-6 text-[#00d2ff]" />
                                     </div>
-                                    <div className="text-[10px] font-black uppercase text-[#888c94] tracking-widest">{glass.volume}ml</div>
+                                    <div className="text-[10px] font-black uppercase text-[#888c94] tracking-widest">{glass.volume ? `${glass.volume}ml` : '—'}</div>
                                 </div>
                                 <h2 className="text-xl font-black text-white italic tracking-tight">{glass.name}</h2>
                                 <p className="text-[#888c94] text-sm leading-relaxed font-medium line-clamp-3">
