@@ -14,15 +14,21 @@ export default async function CocktailsPage() {
     const session = await getServerSession(authOptions)
     const [cocktails, bottles] = await Promise.all([
         prisma.cocktail.findMany({
-            include: {
-                glasses: true,
-                ices: true,
-                tastes: true,
-                techniques: true,
-                ratings: true,
-                favorites: {
-                    where: { userId: session?.user?.id || 'none' }
-                }
+            select: {
+                id: true,
+                name: true,
+                description: true,
+                pictureUrl: true,
+                recipe: true,
+                automationLevel: true,
+                glasses: { select: { id: true, name: true }, take: 1 },
+                ices: { select: { id: true, name: true }, take: 1 },
+                tastes: { select: { id: true, name: true }, take: 3 },
+                techniques: { select: { id: true, name: true }, take: 1 },
+                ratings: { select: { value: true } },
+                favorites: session?.user?.id
+                    ? { where: { userId: session.user.id }, select: { id: true }, take: 1 }
+                    : false,
             },
             orderBy: { name: 'asc' }
         }),
