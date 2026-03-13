@@ -262,6 +262,10 @@ export function CocktailRecipe({ initialIngredients, bottlesMap, iceName, garnis
                     const hasNoNonAlcoholicAlt = isAlcoholFree &&
                         (originalBottle?.alcoholContent ?? 0) > 0 &&
                         !originalBottle?.nonAlcoholic
+                    const currentAlcohol = ing.currentBottle?.alcoholContent ?? null
+                    const filteredRelatedBottles = (inspectedIngredient === idx && currentAlcohol !== null && currentAlcohol > 0)
+                        ? relatedBottles.filter(b => (b.alcoholContent ?? 0) > 0)
+                        : relatedBottles
 
                     return (
                         <div key={idx} className={`space-y-2 rounded-2xl transition-all duration-300 ${hasNoNonAlcoholicAlt ? "bg-red-500/10 border border-red-500/30 px-4 py-3 -mx-4" : ""}`}>
@@ -333,14 +337,14 @@ export function CocktailRecipe({ initialIngredients, bottlesMap, iceName, garnis
                                             <div className="w-4 h-4 border-2 border-[#00d2ff]/20 border-t-[#00d2ff] rounded-full animate-spin"></div>
                                         ) : (
                                             <div className="text-[10px] font-bold text-[#888c94] uppercase tracking-widest">
-                                                {relatedBottles.length} {relatedBottles.length === 1 ? 'Option' : 'Options'}
+                                                {filteredRelatedBottles.length} {filteredRelatedBottles.length === 1 ? 'Option' : 'Options'}
                                             </div>
                                         )}
                                     </div>
 
                                     <div className="grid grid-cols-1 gap-2">
-                                        {relatedBottles.length > 0 ? (
-                                            relatedBottles.map((bottle) => (
+                                        {filteredRelatedBottles.length > 0 ? (
+                                            filteredRelatedBottles.map((bottle) => (
                                                 <div key={bottle.id} className="flex flex-col p-4 bg-[#0b0c10]/40 border border-white/5 rounded-2xl hover:border-[#00d2ff]/30 transition-all hover:translate-x-1 group/bottle">
                                                     <div className="flex justify-between items-center">
                                                         <span className="text-white font-bold text-sm tracking-wide group-hover/bottle:text-[#00d2ff] transition-colors">{bottle.name}</span>
